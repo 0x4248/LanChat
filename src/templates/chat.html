@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            body {
+                font-family: sans-serif;
+            }
+            h1 {
+                text-align: center;
+            }
+            #messages {
+                border: 1px solid #d5d5d5;
+                padding: 10px;
+                margin-bottom: 10px;
+                height: 400px;
+                overflow: scroll;
+            }
+            #form {
+                display: flex;
+                justify-content: space-between;
+            }
+            #form input {
+                flex: 1;
+                margin-right: 10px;
+            }
+
+            #send {
+                max-width: 100px;
+            }
+            img {
+                max-width: 300px;
+            }
+
+            #clear {
+                background-color: red;
+                color: white;
+                border: none;
+                padding: 5px;
+                border-radius: 2px;
+                cursor: pointer;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                body {
+                    background-color: #121212;
+                    color: white;
+                }
+                #messages {
+                    border-color: #333;
+                }
+                #form input {
+                    background-color: #333;
+                    color: white;
+                    border: 1px solid #333;
+                    border-radius: 2px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <h1>💬 LanChat</h1>
+        <div id="messages"></div>
+        <p>Status: <span id="status">No status yet</span></p>   
+        <form id="form">
+            <input type="text" id="name" placeholder="Name">
+            <input type="text" id="message" placeholder="Message">
+            <input type="submit" value="Send" id="send">
+        </form>
+        <br>
+        <button id="clear" onclick="fetch('/clear')">Clear</button>
+        
+        <script>
+            const messages = document.getElementById('messages');
+            const form = document.getElementById('form');
+            const name = document.getElementById('name');
+            const message = document.getElementById('message');
+            const status = document.getElementById('status');
+            let last_response = '';
+            form.addEventListener('submit', e => {
+                e.preventDefault();
+                fetch(`/send?name=${name.value}&message=${message.value}`);
+                message.value = '';
+                status.innerHTML = 'Message sent!';
+                getMessages();
+            });
+
+            const scrollToBottom = () => {
+                messages.scrollTop = messages.scrollHeight;
+            };
+
+            const getMessages = () => {
+                status.innerHTML = 'Fetching messages';
+                fetch('/messages')
+                    .then(res => res.json())
+                    .then(data => {
+                        status.innerHTML = 'Received messages';
+                        messages.innerHTML = '';
+                        
+                        data.messages.forEach(message => {
+                            const div = document.createElement('div');
+                            div.innerHTML = `<strong>${message.name}</strong>: ${message.message}`;
+                            messages.appendChild(div);
+                        });
+                        if (last_response !== JSON.stringify(data)) {
+                            scrollToBottom();
+                            last_response = JSON.stringify(data);
+                        }
+                        last_response = JSON.stringify(data);
+                    })
+                    .catch(err => {
+                        messages.innerHTML = 'An error has occurred or chat has been cleared<br><strong>TIP:</strong> Try refreshing the page or send a message to start a new chat';
+                        message.innerHTML = 'Error occurred see chat window'
+                    });
+            };
+            setInterval(getMessages, 1000);
+
+        </script>
+    </body> 
+</html>
