@@ -9,6 +9,8 @@ from flask import request, jsonify, Response
 import os
 import json
 
+VERSION = "0.1.0"
+
 app = flask.Flask(__name__)
 
 @app.route('/')
