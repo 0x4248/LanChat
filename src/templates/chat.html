@@ -20,6 +20,7 @@
                 height: 400px;
                 overflow: scroll;
             }
+
             #form {
                 display: flex;
                 justify-content: space-between;
@@ -28,6 +29,7 @@
                 flex: 1;
                 margin-right: 10px;
             }
+
 
             #send {
                 max-width: 100px;
@@ -67,19 +69,26 @@
         <div id="messages"></div>
         <p>Status: <span id="status">No status yet</span></p>   
         <form id="form">
-            <input type="text" id="name" placeholder="Name">
+            <input type="text" id="name" placeholder="Name" onchange="">
             <input type="text" id="message" placeholder="Message">
             <input type="submit" value="Send" id="send">
         </form>
         <br>
         <button id="clear" onclick="fetch('/clear')">Clear</button>
-        
         <script>
             const messages = document.getElementById('messages');
             const form = document.getElementById('form');
             const name = document.getElementById('name');
             const message = document.getElementById('message');
             const status = document.getElementById('status');
+            // Fetch from fetch_ip as text and set that as the name and send a message
+            fetch('/fetch_ip')
+                .then(res => res.text())
+                .then(ip => {
+                    name.value = ip;
+                    fetch(`/send?name=<span style="color: red;">System</span>&message=<strong>${ip}</strong> has joined the chat`);
+                    form.dispatchEvent(new Event('submit'));
+                });
             let last_response = '';
             form.addEventListener('submit', e => {
                 e.preventDefault();
@@ -99,14 +108,22 @@
                     .then(res => res.json())
                     .then(data => {
                         status.innerHTML = 'Received messages';
-                        messages.innerHTML = '';
                         
-                        data.messages.forEach(message => {
-                            const div = document.createElement('div');
-                            div.innerHTML = `<strong>${message.name}</strong>: ${message.message}`;
-                            messages.appendChild(div);
-                        });
+                        
                         if (last_response !== JSON.stringify(data)) {
+                            messages.innerHTML = '';
+                            data.messages.forEach(message => {
+                                const div = document.createElement('div');
+                                div.innerHTML = `<strong>${message.name}</strong>: ${message.message}`;
+                                messages.appendChild(div);
+                                
+                                if (!document.hasFocus()) {
+                                    const notification = new Notification('New message', {
+                                        body: `${message.name}: ${message.message}`
+                                    });
+
+                                }
+                            });
                             scrollToBottom();
                             last_response = JSON.stringify(data);
                         }
@@ -118,7 +135,6 @@
                     });
             };
             setInterval(getMessages, 1000);
-
         </script>
     </body> 
 </html>

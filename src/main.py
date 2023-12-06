@@ -61,5 +61,9 @@ def status():
     else:
         return Response(status=204)
 
+@app.route('/fetch_ip', methods=['GET'])
+def fetch_ip():
+    return request.remote_addr
+
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8000)
+    app.run(debug=True, host='0.0.0.0', port=80)
