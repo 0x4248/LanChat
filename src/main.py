@@ -9,7 +9,7 @@ from flask import request, jsonify, Response
 import os
 import json
 
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 
 app = flask.Flask(__name__)
 
