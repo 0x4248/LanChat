@@ -10,6 +10,8 @@ pip install flask
 cd LanChat
 ```
 
+Then let everyone open a web browser and go to `http://<your-ip>` and chat away!
+
 ## Usage
 
 ```bash
