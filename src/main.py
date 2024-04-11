@@ -1,8 +1,8 @@
 # LanChat
 # Chat with friends on your local lan
-# GitHub: https://www.github.com/lewisevans2007/LanChat
+# GitHub: https://www.github.com/0x4248/LanChat
 # Licence: GNU General Public Licence v3.0
-# By: Lewis Evans
+# By: 0x4248
 
 import flask
 from flask import request, jsonify, Response

@@ -5,7 +5,7 @@ Chat with friends on your local lan
 ## Installation
 
 ```bash
-git clone https://www.github.com/lewisevans2007/LanChat
+git clone https://www.github.com/0x4248/LanChat
 pip install flask
 cd LanChat
 ```
